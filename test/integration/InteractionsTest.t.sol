@@ -12,7 +12,7 @@ contract InteractionsTest is Test {
     address USER = makeAddr("user"); // foundry cheatcode to make a fake address, this user doesnot have any ETH by default
     uint256 constant STARTING_USER_BALANCE = 10 ether; //10000000000000000000
     uint256 constant SEND_VALUE = 0.1 ether; //100000000000000000
-    uint256 constant GAS_PRICE = 1; 
+    uint256 constant GAS_PRICE = 1;
 
     function setUp() external {
         DeployFundMe deployFundMe = new DeployFundMe();
@@ -29,4 +29,4 @@ contract InteractionsTest is Test {
 
         assert(address(fundMe).balance == 0); // Check if the balance is zero after funding and withdrawing
     }
-} 
+}

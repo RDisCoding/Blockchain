@@ -5,14 +5,13 @@ import {Test, console} from "forge-std/Test.sol";
 import {FundMe} from "../../src/FundMe.sol";
 import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 
-contract FundMeTest is Test{
-
+contract FundMeTest is Test {
     FundMe fundMe;
 
     address USER = makeAddr("user"); // foundry cheatcode to make a fake address, this user doesnot have any ETH by default
     uint256 constant STARTING_USER_BALANCE = 10 ether; //10000000000000000000
     uint256 constant SEND_VALUE = 0.1 ether; //100000000000000000
-    uint256 constant GAS_PRICE = 1; 
+    uint256 constant GAS_PRICE = 1;
 
     function setUp() external {
         //fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
@@ -21,17 +20,17 @@ contract FundMeTest is Test{
         vm.deal(USER, STARTING_USER_BALANCE); // foundry cheatcode to give USER some ETH
     }
 
-    function testMinimumDollarIsFive() public view{
+    function testMinimumDollarIsFive() public view {
         assertEq(fundMe.MINIMUM_USD(), 5e18);
     }
 
-    function testOwnerIsMsgSender() public view{
+    function testOwnerIsMsgSender() public view {
         assertEq(fundMe.getOwner(), msg.sender);
     }
 
     function testPriceFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
-        assertEq(version, 4); 
+        assertEq(version, 4);
     }
 
     function testDundsFailWithoutEnoughEth() public {
@@ -85,17 +84,14 @@ contract FundMeTest is Test{
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
         assertEq(endingFundMeBalance, 0);
-        assertEq(
-            endingOwnerBalance,
-            startingOwnerBalance + startingFundMeBalance
-        );
+        assertEq(endingOwnerBalance, startingOwnerBalance + startingFundMeBalance);
     }
 
     function testWithdrawFromMultipleFunders() public funded {
         //Arrange
         uint160 numberOfFunders = 10;
         uint160 startingFunderIndex = 1;
-        for (uint160 i = startingFunderIndex; i< numberOfFunders; i++){
+        for (uint160 i = startingFunderIndex; i < numberOfFunders; i++) {
             hoax(address(i), SEND_VALUE); // foundry cheatcode to make a fake address and send SEND_VALUE to it
             fundMe.fund{value: SEND_VALUE}();
         }
@@ -111,14 +107,13 @@ contract FundMeTest is Test{
         // Assert
         assertEq(address(fundMe).balance, 0);
         assertEq(fundMe.getOwner().balance, startingOwnerBalance + startingFundMeBalance);
-
     }
 
     function testWithdrawFromMultipleFundersCheaper() public funded {
         //Arrange
         uint160 numberOfFunders = 10;
         uint160 startingFunderIndex = 1;
-        for (uint160 i = startingFunderIndex; i< numberOfFunders; i++){
+        for (uint160 i = startingFunderIndex; i < numberOfFunders; i++) {
             hoax(address(i), SEND_VALUE); // foundry cheatcode to make a fake address and send SEND_VALUE to it
             fundMe.fund{value: SEND_VALUE}();
         }
@@ -134,6 +129,5 @@ contract FundMeTest is Test{
         // Assert
         assertEq(address(fundMe).balance, 0);
         assertEq(fundMe.getOwner().balance, startingOwnerBalance + startingFundMeBalance);
-
     }
 }
