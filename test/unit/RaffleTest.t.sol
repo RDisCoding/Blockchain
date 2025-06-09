@@ -9,7 +9,6 @@ import {Vm} from "forge-std/Vm.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 import {CodeConstants} from "script/HelperConfig.s.sol";
 
-
 contract RaffleTest is Test, CodeConstants {
     Raffle public raffle;
     HelperConfig public helperConfig;
@@ -92,7 +91,7 @@ contract RaffleTest is Test, CodeConstants {
         vm.roll(block.number + 1);
 
         // Act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         //assert
         assert(!upkeepNeeded);
@@ -107,7 +106,7 @@ contract RaffleTest is Test, CodeConstants {
         raffle.performUpkeep("");
 
         // Act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         // Assert
         assert(!upkeepNeeded);
@@ -121,7 +120,7 @@ contract RaffleTest is Test, CodeConstants {
         vm.roll(block.number + 1); // Helps to simulate a new block being mined
 
         // Act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         // Assert
         assert(!upkeepNeeded);
@@ -135,12 +134,12 @@ contract RaffleTest is Test, CodeConstants {
         vm.roll(block.number + 1); // Helps to simulate a new block being mined
 
         // Act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
         // Assert
         assert(upkeepNeeded);
     }
-    
+
     function testPerformUpkeepCanOnlyBeCalledIfCheckUpkeepReturnsTrue() public {
         // Arrange
         vm.prank(PLAYER);
@@ -164,7 +163,9 @@ contract RaffleTest is Test, CodeConstants {
         numPlayers = 1;
 
         // Act / Assert
-        vm.expectRevert(abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, rState));    
+        vm.expectRevert(
+            abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, rState)
+        );
         raffle.performUpkeep("");
     }
 
@@ -188,7 +189,7 @@ contract RaffleTest is Test, CodeConstants {
         // Assert
         Raffle.RaffleState raffleState = raffle.getRaffleState();
         assert(uint256(requestId) > 0);
-        assert(uint256(raffleState)== 1);
+        assert(uint256(raffleState) == 1);
     }
 
     modifier skipFork() {
@@ -198,20 +199,19 @@ contract RaffleTest is Test, CodeConstants {
         _;
     }
 
-    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 requestId) public raffleEntered skipFork{
+    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 requestId) public raffleEntered skipFork {
         // Arrange / Act / Assert
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(requestId, address(raffle));
-
     }
 
-    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered skipFork{
+    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered skipFork {
         // Arrange
         uint256 additionalEntrants = 3;
         uint256 startingIndex = 1; // 0 is the PLAYER
-        address expectedWinner = address(1); 
+        address expectedWinner = address(1);
 
-        for (uint256 i = startingIndex; i< startingIndex + additionalEntrants; i++) {
+        for (uint256 i = startingIndex; i < startingIndex + additionalEntrants; i++) {
             address newPlayer = address(uint160(i)); //convertion of number i to address and giving it to player
             hoax(newPlayer, 1 ether); // hoax = deal + prank
             raffle.enterRaffle{value: entranceFee}();
@@ -235,7 +235,7 @@ contract RaffleTest is Test, CodeConstants {
 
         assert(recentWinner == expectedWinner);
         assert(uint256(raffleState) == 0);
-        assert(winnerBalance == winnerStartingBalance + prize );
+        assert(winnerBalance == winnerStartingBalance + prize);
         assert(endingTimeStamp > startingTimeStamp);
     }
 }

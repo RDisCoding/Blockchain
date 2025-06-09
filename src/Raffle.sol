@@ -108,7 +108,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         upkeepNeeded = timeHasPassed && isOpen && hasBalance && hasPlayers;
         return (upkeepNeeded, "");
     }
- 
+
     //1. Pick a random number
     //2. Use this number to select a winner
     //3. Automate this process
@@ -136,7 +136,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     }
 
     //CEI: Check-Effect-Interaction
-    function fulfillRandomWords(uint256 /* requestId */, uint256[] calldata randomWords) internal override {
+    function fulfillRandomWords(uint256, /* requestId */ uint256[] calldata randomWords) internal override {
         // Check
         // Effects
         uint256 indexOfWinner = randomWords[0] % s_players.length;
@@ -168,11 +168,12 @@ contract Raffle is VRFConsumerBaseV2Plus {
     function getPlayer(uint256 indexOfPlayer) external view returns (address) {
         return s_players[indexOfPlayer];
     }
+
     function getRecentWinner() external view returns (address) {
         return s_recentWinner;
     }
+
     function getLastTimeStamp() external view returns (uint256) {
         return s_lastTimeStamp;
     }
-    
 }
