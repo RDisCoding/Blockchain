@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract ManualToke{
-
-    mapping (address => uint256) private s_balances;
+contract ManualToke {
+    mapping(address => uint256) private s_balances;
 
     function name() public pure returns (string memory) {
         return "Manual Token";
